@@ -7,7 +7,7 @@ readonly class UserManager
 {
     private Storage $storage;
     public function __construct(){
-        $this->storage = new Storage('localhost','my_user','root','');
+        $this->storage = new Storage('localhost','my_user','root',''); //à changer en fonction de la configuration du serveur
     }
 
     public function verificationData(User $user):bool
