@@ -7,7 +7,7 @@ readonly class UserManager
 {
     private Storage $storage;
     public function __construct(){
-        $this->storage = new Storage('db','my_user','my_user','my_password');
+        $this->storage = new Storage('localhost','my_user','root','');
     }
 
     public function verificationData(User $user):bool
@@ -33,7 +33,7 @@ readonly class UserManager
     {
         $user = $this->existUsers($email);
 
-        return $user instanceof User && $user->getPassword() === $password;
+        return $user instanceof User && $user->getPassword() === password_hash($password,PASSWORD_DEFAULT); //on vérifie si le mdp rentré une fois hashé correspond à celui en bdd (déjà hashé)
     }
 
     public function mappedUser($username,$email,$password):User
