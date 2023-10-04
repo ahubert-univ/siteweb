@@ -11,7 +11,7 @@ if($_SERVER['REQUEST_METHOD'] !== "POST"){
 //$storage = new Storage('db','my_user','root','my_root_password');
 $userManager = new UserManager();
 
-if($userManager->loggedUser($_POST['email'],$_POST['pswd'])){
+if($userManager->loggedUser($_POST['email'],password_verify($_POST['pswd'],$userManager->getPassword($_POST['email'])))){
     ob_start();
     session_start();
     $user = $userManager->existUsers($_POST['email']);
