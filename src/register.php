@@ -9,15 +9,17 @@ if($_SERVER['REQUEST_METHOD'] !== "POST"){
     header('Location: index.php');
 }
 
-
+$password = $_POST['pswd'];
 $result = "ko";
 $userManager = new UserManager();
 $user = $userManager->mappedUser($_POST['username'],$_POST['email'],$_POST['pswd']);
+
 $_SESSION['user_obj'] = $user;
 if($userManager->verificationData($user) === true){
     $userManager->insertUser($user);
     $_SESSION['form_msg'] = 'You are register please login';
     $result = "ok";
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 }
 
 header(sprintf('Location: index.php?result=%s',$result));
