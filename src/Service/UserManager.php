@@ -7,7 +7,7 @@ readonly class UserManager
 {
     private Storage $storage;
     public function __construct(){
-        $this->storage = new Storage('db','my_user','my_user','my_password');
+        $this->storage = new Storage('localhost','users','root','Supercoco10020702$');
     }
 
     public function verificationData(User $user):bool
@@ -32,8 +32,7 @@ readonly class UserManager
     public function loggedUser(string $email,string $password): bool
     {
         $user = $this->existUsers($email);
-
-        return $user instanceof User && $user->getPassword() === $password;
+        return $user instanceof User && password_verify($password, $user->getPassword());
     }
 
     public function mappedUser($username,$email,$password):User
