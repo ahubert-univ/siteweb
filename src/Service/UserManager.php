@@ -33,7 +33,7 @@ readonly class UserManager
     {
         $user = $this->existUsers($email);
 
-        return $user instanceof User && $user->getPassword() === $password;
+        return $user instanceof User && $user->getPassword() === password_hash($password, PASSWORD_DEFAULT);
     }
 
     public function mappedUser($username,$email,$password):User
