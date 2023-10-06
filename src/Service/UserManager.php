@@ -33,7 +33,7 @@ readonly class UserManager
     {
         $user = $this->existUsers($email);
 
-        return $user instanceof User && $user->getPassword() === $password;
+        return $user instanceof User && password_verify($password,$user->getPassword());
     }
 
     public function mappedUser($username,$email,$password):User
@@ -41,7 +41,7 @@ readonly class UserManager
         $objUser = new User();
         $objUser->setEmail($email);
         $objUser->setUsername($username);
-        $objUser->setPassword($password);
+        $objUser->setPassword(password_hash($password, PASSWORD_BCRYPT));
 
         return $objUser;
     }
