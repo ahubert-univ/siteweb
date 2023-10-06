@@ -7,7 +7,7 @@ readonly class UserManager
 {
     private Storage $storage;
     public function __construct(){
-        $this->storage = new Storage('localhost','users','root','Supercoco10020702$');
+        $this->storage = new Storage('localhost','users','root','');
     }
 
     public function verificationData(User $user):bool
@@ -40,7 +40,7 @@ readonly class UserManager
         $objUser = new User();
         $objUser->setEmail($email);
         $objUser->setUsername($username);
-        $objUser->setPassword($password);
+        $objUser->setPassword(password_hash($password,PASSWORD_BCRYPT));
 
         return $objUser;
     }

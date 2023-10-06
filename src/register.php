@@ -12,7 +12,7 @@ if($_SERVER['REQUEST_METHOD'] !== "POST"){
 
 $result = "ko";
 $userManager = new UserManager();
-$user = $userManager->mappedUser($_POST['username'],$_POST['email'],password_hash($_POST['pswd'],APC_ITER_MD5));
+$user = $userManager->mappedUser($_POST['username'],$_POST['email'],$_POST['password']);
 $_SESSION['user_obj'] = $user;
 if($userManager->verificationData($user) === true){
     $userManager->insertUser($user);

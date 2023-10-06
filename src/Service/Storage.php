@@ -3,7 +3,7 @@
 readonly class Storage
 {
 
-    public function __construct(private string $host, private string $db, private string $login ='root', private string $pass='Supercoco10020702$'){
+    public function __construct(private string $host, private string $db, private string $login ='root', private string $pass=''){
     }
 
     public function connexion():\PDO
