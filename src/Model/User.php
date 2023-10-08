@@ -70,9 +70,7 @@ class User
         $this->password = password_hash($this->password, PASSWORD_DEFAULT);
     }
 
-    public function passwordVerify($enteredPassword) {
-        return password_verify($enteredPassword, $this->password);
-    }
+    
     
     
 }
