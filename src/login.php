@@ -20,5 +20,5 @@ if($userManager->loggedUser($_POST['email'],$_POST['pswd'])){
 
     header('Location: my_page.php');
 }else{
-    //header('Location: index.php?result=ko');
+    header('Location: index.php?result=ko');
 }
