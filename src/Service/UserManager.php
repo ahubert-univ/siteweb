@@ -7,7 +7,8 @@ readonly class UserManager
 {
     private Storage $storage;
     public function __construct(){
-        $this->storage = new Storage('db','my_user','my_user','my_password');
+        //$this->storage = new Storage('db','my_user','my_user','my_password');
+        $this->storage = new Storage('localhost','pwsiteweb','root','');
     }
 
     public function verificationData(User $user):bool
@@ -32,8 +33,9 @@ readonly class UserManager
     public function loggedUser(string $email,string $password): bool
     {
         $user = $this->existUsers($email);
-
-        return $user instanceof User && $user->getPassword() === $password;
+        //return $user instanceof User && $user->getPassword() === $password;
+        //Vérification du hash
+        return $user instanceof User && $user->getPassword() === hash("sha256",$password);
     }
 
     public function mappedUser($username,$email,$password):User
@@ -67,7 +69,8 @@ readonly class UserManager
         $stmt = $pdo->prepare($query);
         $username = $user->getUsername();
         $stmt->bindParam(':username', $username);
-        $password = $user->getPassword();
+        //Hashage du mot de passe
+        $password = hash("sha256",$user->getPassword());
         $stmt->bindParam(':password', $password);
         $email = $user->getEmail();
         $stmt->bindParam('email', $email);
