@@ -3,7 +3,7 @@
 require_once __DIR__ . "/../Model/User.php";
 require_once __DIR__ . "/../Service/Storage.php";
 require_once __DIR__ . "/../Service/ValidationData.php";
-    readonly class UserManager
+ class UserManager
 {
     private Storage $storage;
     public function __construct(){
