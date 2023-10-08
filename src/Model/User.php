@@ -64,4 +64,13 @@ class User
         $this->created_at = $created_at;
         return $this;
     }
+
+    //Méthode pour hacher le mdp
+    public function passwordHash() {
+        $this->password = password_hash($this->password, PASSWORD_DEFAULT);
+    }
+
+    
+    
+    
 }
