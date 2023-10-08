@@ -3,24 +3,29 @@
 require_once __DIR__ . "/../Model/User.php";
 require_once __DIR__ . "/../Service/Storage.php";
 require_once __DIR__ . "/../Service/ValidationData.php";
+
+require_once __DIR__ . "/../config.php";
+
 readonly class UserManager
 {
     private Storage $storage;
-    public function __construct(){
-        $this->storage = new Storage('db','my_user','my_user','my_password');
+
+    public function __construct()
+    {
+        $this->storage = new Storage('db', 'my_user', 'my_user', 'my_password');
     }
 
-    public function verificationData(User $user):bool
+    public function verificationData(User $user): bool
     {
         $msg = match (false) {
             ValidationData::stringNotEmpty($user->getUsername()) => 'Username can not be empty',
             ValidationData::verificationEmail($user->getEmail()) => 'Your Email is incorrect ',
             ValidationData::verificationPassword($user->getPassword()) => 'Your password is incorrect ! ',
-            !$this->existUsers($user->getEmail())  => 'You\'re already register please login',
+            !$this->existUsers($user->getEmail()) => 'You\'re already register please login',
             default => true,
         };
 
-        if(true !== $msg){
+        if (true !== $msg) {
             $_SESSION['form_msg'] = $msg;
             $msg = false;
         }
@@ -29,40 +34,53 @@ readonly class UserManager
 
     }
 
-    public function loggedUser(string $email,string $password): bool
+    public function loggedUser(string $email, string $password): bool
     {
         $user = $this->existUsers($email);
 
-        return $user instanceof User && $user->getPassword() === $password;
+        //
+        $pwd_secret = Config::PWD_SECRET;
+        $mixed_password = hash_hmac("sha256", $password, $pwd_secret);
+
+        //return $user instanceof User && $user->getPassword() === $password;
+
+        return $user instanceof User && password_verify($mixed_password, $user->getPassword());
     }
 
-    public function mappedUser($username,$email,$password):User
+    public function mappedUser($username, $email, $password): User
     {
         $objUser = new User();
         $objUser->setEmail($email);
         $objUser->setUsername($username);
-        $objUser->setPassword($password);
+
+        // Le fichier Config.php sera ignoré après dans .gitignore (src/config.php)
+        $pwd_secret = Config::PWD_SECRET;
+        $mixed_password = hash_hmac("sha256", $password, $pwd_secret);
+        $hashed_password = password_hash($mixed_password, PASSWORD_ARGON2ID);
+
+        $objUser->setPassword($hashed_password);
 
         return $objUser;
     }
 
-    public function insertUser(User $user):bool
+    public function insertUser(User $user): bool
     {
         $query = "INSERT INTO users (username, password, email) VALUES (:username, :password, :email)";
-        return $this->queryPrepare($query,$user)->execute();
+        return $this->queryPrepare($query, $user)->execute();
     }
 
-    public function updateUser(User $user):bool
+    public function updateUser(User $user): bool
     {
         $query = "UPDATE users SET username = :username,password =:password,email=:email  WHERE id =:id";
 
-        $stmt = $this->queryPrepare($query,$user);
+        $stmt = $this->queryPrepare($query, $user);
         $id = $user->getId();
         $stmt->bindParam('id', $id);
         return $stmt->execute();
     }
 
-    private function queryPrepare(string $query,User $user):\PDOStatement|false{
+    private function queryPrepare(string $query, User $user): \PDOStatement|false
+    {
         $pdo = $this->storage->connexion();
         $stmt = $pdo->prepare($query);
         $username = $user->getUsername();
@@ -73,12 +91,13 @@ readonly class UserManager
         $stmt->bindParam('email', $email);
         return $stmt;
     }
+
     public function selectUsers(string $email): array
     {
 
         $pdo = $this->storage->connexion();
         $stmt = $pdo->prepare("SELECT * FROM users WHERE email= :email");
-        $stmt->bindParam(':email',$email);
+        $stmt->bindParam(':email', $email);
         $stmt->execute();
 
         return $stmt->fetchAll(\PDO::FETCH_CLASS, "User");
@@ -88,9 +107,9 @@ readonly class UserManager
     {
         $pdo = $this->storage->connexion();
         $stmt = $pdo->prepare("SELECT * FROM users WHERE email= :email");
-        $stmt->bindParam(':email',$email);
+        $stmt->bindParam(':email', $email);
         $stmt->execute();
 
-        return $stmt->fetchObject("User") ;
+        return $stmt->fetchObject("User");
     }
 }
