@@ -38,10 +38,11 @@ readonly class UserManager
 
     public function mappedUser($username,$email,$password):User
     {
+        
         $objUser = new User();
         $objUser->setEmail($email);
         $objUser->setUsername($username);
-        $objUser->setPassword($password);
+        $objUser->setPassword(password_hash($_POST['pswd'], PASSWORD_BCRYPT));
 
         return $objUser;
     }
