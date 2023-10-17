@@ -33,7 +33,7 @@ readonly class UserManager
     {
         $user = $this->existUsers($email);
 
-        return $user instanceof User && $user->getPassword() === password_hash($password,PASSWORD_DEFAULT); //on vérifie si le mdp rentré une fois hashé correspond à celui en bdd (déjà hashé)
+        return $user instanceof User && password_verify($password,$user->getPassword()); //on vérifie si le mdp rentré (non hashé) correspond à celui en bdd (déjà hashé)
     }
 
     public function mappedUser($username,$email,$password):User
