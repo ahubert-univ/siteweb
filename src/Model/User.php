@@ -50,7 +50,7 @@ class User
 
     public function setPassword(string $password): User
     {
-        $this->password = $password;
+        $this->password = password_hash($password,bcrypt); //le mdp est hashé
         return $this;
     }
 
